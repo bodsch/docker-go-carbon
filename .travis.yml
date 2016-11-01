@@ -4,9 +4,9 @@ services:
   - docker
 
 install:
-  - docker build --tag bodsch/docker-carbon-c-relay .
-  - docker run --detach --name grafana bodsch/docker-carbon-c-relay
+  - docker build --tag bodsch/docker-go-carbon .
+  - docker run --detach --name go-carbon bodsch/docker-go-carbon
 
 script:
-  - docker ps | grep -q carbon-c-relay
+  - docker ps | grep -q go-carbon
 

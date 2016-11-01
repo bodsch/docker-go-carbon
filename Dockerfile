@@ -5,10 +5,7 @@ MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
 LABEL version="1.1.0"
 
-EXPOSE 2003
-EXPOSE 2004
-EXPOSE 7002
-EXPOSE 7007
+EXPOSE 2003 2003/udp 2004 7002 7007
 
 ENV GOPATH=/opt/go
 ENV GO15VENDOREXPERIMENT=0
@@ -24,35 +21,21 @@ RUN \
     git && \
   export PATH="${PATH}:${GOPATH}/bin" && \
   go get -d github.com/lomik/go-carbon && \
-  go get github.com/jteeuwen/go-bindata/... && \
   cd ${GOPATH}/src/github.com/lomik/go-carbon && \
   make submodules && \
-  make
-
-#  mv carbon-relay-ng /usr/bin && \
-#  mkdir -p /var/spool/carbon-relay-ng && \
-#  chown nobody: /var/spool/carbon-relay-ng && \
-
-RUN \
+  make && \
+  install -m 0755 go-carbon /usr/bin/go-carbon && \
   apk del --purge \
     build-base \
     go \
-    git
+    git && \
+  rm -rf \
+    ${GOPATH} \
+    /tmp/* \
+    /var/cache/apk/*
 
-#RUN \
-#  rm -rf \
-#    ${GOPATH} \
-#    /tmp/* \
-#    /var/cache/apk/* \
-#    /root/.n* \
-#    /usr/local/bin/phantomjs
+COPY rootfs/ /
 
-# COPY rootfs/ 
+CMD /opt/startup.sh
 
-#WORKDIR /usr/share/grafana
-
-# CMD [ "/opt/startup.sh" ]
-
-CMD /bin/bash
-
-# EOF
+# ---------------------------------------------------------------------------------------

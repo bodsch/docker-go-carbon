@@ -1,6 +1,6 @@
 # docker-go-carbon
 
-A Docker container for the fast carbon relay+aggregator with admin interfaces for making changes online (https://github.com/graphite-ng/carbon-relay-ng)
+A Docker container for the Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister (https://github.com/lomik/go-carbon)
 
 # Status
 
@@ -41,14 +41,10 @@ You can find the Container also at  [DockerHub](https://hub.docker.com/r/bodsch/
 
 # supported Environment Vars
 
-  - GRAPHITE_HOST  (default: ```graphite```)
-  - GRAPHITE_PORT  (default: ```2003```)
-
-
 # Ports
 
  - 2003
+ - 2003/udp
  - 2004
- - 8081
-
-# docker-go-carbon
+ - 7002
+ - 7007
