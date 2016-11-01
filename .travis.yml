@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+install:
+  - docker build --tag bodsch/docker-carbon-c-relay .
+  - docker run --detach --name grafana bodsch/docker-carbon-c-relay
+
+script:
+  - docker ps | grep -q carbon-c-relay
+
