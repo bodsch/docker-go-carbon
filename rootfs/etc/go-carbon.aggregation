@@ -1,0 +1,44 @@
+[min]
+pattern = \.min$
+xFilesFactor = 0.1
+aggregationMethod = min
+
+[max]
+pattern = \.max(_\d+)?$
+xFilesFactor = 0.1
+aggregationMethod = max
+
+[sum]
+pattern = \.sum$
+xFilesFactor = 0
+aggregationMethod = sum
+
+[count]
+pattern = \.count$
+xFilesFactor = 0
+aggregationMethod = sum
+
+[count_legacy]
+pattern = ^stats_counts.*
+xFilesFactor = 0
+aggregationMethod = sum
+
+[ratio]
+pattern = \.ratio$
+xFilesFactor = 0.1
+aggregationMethod = average
+
+[m1_rate]
+pattern = \.m1_rate$
+xFilesFactor = 0.1
+aggregationMethod = sum
+
+[p95]
+pattern = \.p95$
+xFilesFactor = 0.1
+aggregationMethod = max
+
+[default_average]
+pattern = .*
+xFilesFactor = 0.3
+aggregationMethod = average

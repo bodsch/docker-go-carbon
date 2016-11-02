@@ -2,7 +2,11 @@
 pattern = ^carbon\.
 retentions = 60:90d
 
-[default_1min_for_1day]
+[default]
 pattern = .*
-retentions = 60s:1d
+retentions = 30s:6h,1m:30d,10m:360d,30m:720d,1d:1825d
+
+#[default_1min_for_1day]
+#pattern = .*
+#retentions = 60s:1d
 
