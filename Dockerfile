@@ -3,7 +3,7 @@ FROM bodsch/docker-alpine-base:1701-02
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1.2.0"
+LABEL version="1.2.1"
 
 EXPOSE 2003 2003/udp 2004 7002 7007
 

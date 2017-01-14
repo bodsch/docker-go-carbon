@@ -1,6 +1,7 @@
 # docker-go-carbon
 
-A Docker container for the Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister (https://github.com/lomik/go-carbon)
+A Docker container for the Golang implementation of Graphite/Carbon server with classic architecture:
+Agent -> Cache -> Persister (https://github.com/lomik/go-carbon)
 
 # Status
 
