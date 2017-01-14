@@ -1,14 +1,15 @@
 
-FROM bodsch/docker-alpine-base:1612-01
+FROM bodsch/docker-alpine-base:1701-02
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1.1.2"
+LABEL version="1.2.0"
 
 EXPOSE 2003 2003/udp 2004 7002 7007
 
-ENV GOPATH=/opt/go
-ENV GO15VENDOREXPERIMENT=0
+ENV \
+  GOPATH=/opt/go \
+  GO15VENDOREXPERIMENT=0
 
 # ---------------------------------------------------------------------------------------
 
@@ -28,7 +29,13 @@ RUN \
   apk del --purge \
     build-base \
     go \
-    git && \
+    git \
+    wget \
+    bash \
+    nano \
+    tree \
+    curl \
+    ca-certificates && \
   rm -rf \
     ${GOPATH} \
     /tmp/* \
@@ -36,6 +43,6 @@ RUN \
 
 COPY rootfs/ /
 
-CMD /opt/startup.sh
+CMD [ "/opt/startup.sh" ]
 
 # ---------------------------------------------------------------------------------------

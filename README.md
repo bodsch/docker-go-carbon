@@ -4,7 +4,7 @@ A Docker container for the Golang implementation of Graphite/Carbon server with 
 
 # Status
 
-[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=master)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
+[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=1701-02)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
 
 
 # Build
