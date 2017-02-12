@@ -1,11 +1,6 @@
 #!/bin/sh
 #
 
-if [ ${DEBUG} ]
-then
-  set -x
-fi
-
 WORK_DIR=${WORK_DIR:-/srv}
 
 CONFIG_FILE="/etc/carbon.conf"
@@ -24,18 +19,6 @@ prepare() {
   cp  /etc/go-carbon.schemas ${schemasFile}
 }
 
-startSupervisor() {
-
-  echo -e "\n Starting Supervisor.\n\n"
-
-  if [ -f /etc/supervisord.conf ]
-  then
-    /usr/bin/supervisord -c /etc/supervisord.conf >> /dev/null
-  else
-    exec /bin/sh
-  fi
-}
-
 
 run() {
 
@@ -44,14 +27,6 @@ run() {
   go-carbon -check-config -config ${CONFIG_FILE}
 
   go-carbon -config ${CONFIG_FILE}
-
-#   echo -e "\n"
-#   echo " ==================================================================="
-#   echo " starting go-carbon"
-#   echo " ==================================================================="
-#   echo ""
-#
-#   startSupervisor
 }
 
 run
