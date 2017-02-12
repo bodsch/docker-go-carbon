@@ -1,33 +1,30 @@
 # docker-go-carbon
 
-A Docker container for the Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister (https://github.com/lomik/go-carbon)
+A Docker container for the Golang implementation of Graphite/Carbon server with classic architecture:
+Agent -> Cache -> Persister (https://github.com/lomik/go-carbon)
 
 # Status
 
-[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=master)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
+[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=1702-02)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
 
 
 # Build
 
 Your can use the included Makefile.
 
-To build the Container:
-    make build
+To build the Container: ```make build```
 
-Starts the Container:
-    make run
+To remove the builded Docker Image: ```make clean```
 
-Starts the Container with Login Shell:
-    make shell
+Starts the Container: ```make run```
 
-Entering the Container:
-    make exec
+Starts the Container with Login Shell: ```make shell```
 
-Stop (but **not kill**):
-    make stop
+Entering the Container: ```make exec```
 
-History
-    make history
+Stop (but **not kill**): ```make stop```
+
+History ```make history```
 
 
 # Docker Hub

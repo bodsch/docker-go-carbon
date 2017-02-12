@@ -1,10 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 #
-
-if [ ${DEBUG} ]
-then
-  set -x
-fi
 
 WORK_DIR=${WORK_DIR:-/srv}
 
@@ -19,21 +14,9 @@ prepare() {
   dataDirectory=$(grep 'data-dir' ${CONFIG_FILE} | awk -F ' = ' '{printf $2}' | sed -e 's|"||g')
   schemasFile=$(grep 'schemas-file' ${CONFIG_FILE} | awk -F ' = ' '{printf $2}' | sed -e 's|"||g')
 
-  [ -d ${dataDirectory} ] || mkdir -vp ${dataDirectory}
+  [ -d ${dataDirectory} ] || mkdir -p ${dataDirectory}
 
-  cp -v /etc/go-carbon.schemas ${schemasFile}
-}
-
-startSupervisor() {
-
-  echo -e "\n Starting Supervisor.\n\n"
-
-  if [ -f /etc/supervisord.conf ]
-  then
-    /usr/bin/supervisord -c /etc/supervisord.conf >> /dev/null
-  else
-    exec /bin/bash
-  fi
+  cp  /etc/go-carbon.schemas ${schemasFile}
 }
 
 
@@ -41,15 +24,9 @@ run() {
 
   prepare
 
-  go-carbon -check-config -config /etc/carbon.conf
+  go-carbon -check-config -config ${CONFIG_FILE}
 
-  echo -e "\n"
-  echo " ==================================================================="
-  echo " starting go-carbon"
-  echo " ==================================================================="
-  echo ""
-
-  startSupervisor
+  go-carbon -config ${CONFIG_FILE}
 }
 
 run
