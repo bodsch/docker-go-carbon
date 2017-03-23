@@ -5,26 +5,26 @@ Agent -> Cache -> Persister (https://github.com/lomik/go-carbon)
 
 # Status
 
-[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=1702-02)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
+[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=1703-03)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
 
 
 # Build
 
 Your can use the included Makefile.
 
-To build the Container: ```make build```
+To build the Container: `make build`
 
-To remove the builded Docker Image: ```make clean```
+To remove the builded Docker Image: `make clean`
 
-Starts the Container: ```make run```
+Starts the Container: `make run`
 
-Starts the Container with Login Shell: ```make shell```
+Starts the Container with Login Shell: `make shell`
 
-Entering the Container: ```make exec```
+Entering the Container: `make exec`
 
-Stop (but **not kill**): ```make stop```
+Stop (but **not kill**): `make stop`
 
-History ```make history```
+History `make history`
 
 
 # Docker Hub

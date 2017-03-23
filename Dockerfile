@@ -1,15 +1,15 @@
 
-FROM alpine:latest
+FROM golang:1.8-alpine
+
+# FROM alpine:latest
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1702-02"
+LABEL version="1703-03"
 
 EXPOSE 2003 2003/udp 2004 7002 7007
 
 ENV \
-  ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
-  ALPINE_VERSION="v3.5" \
   TERM=xterm \
   GOPATH=/opt/go \
   GO15VENDOREXPERIMENT=0
@@ -17,13 +17,10 @@ ENV \
 # ---------------------------------------------------------------------------------------
 
 RUN \
-  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/main"       > /etc/apk/repositories && \
-  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/community" >> /etc/apk/repositories && \
   apk --quiet --no-cache update && \
   apk --quiet --no-cache upgrade && \
   apk --quiet --no-cache add \
     build-base \
-    go \
     git && \
   mkdir -p ${GOPATH} && \
   export PATH="${PATH}:${GOPATH}/bin" && \
@@ -34,14 +31,18 @@ RUN \
   install -m 0755 go-carbon /usr/bin/go-carbon && \
   apk del --purge \
     build-base \
-    go \
     git && \
   rm -rf \
     ${GOPATH} \
+    /go \
     /tmp/* \
+    /usr/local/go \
+    /usr/local/bin/go-wrapper \
     /var/cache/apk/*
 
 COPY rootfs/ /
+
+WORKDIR /
 
 CMD [ "/opt/startup.sh" ]
 
