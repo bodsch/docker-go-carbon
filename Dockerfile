@@ -1,8 +1,6 @@
 
 FROM golang:1.8-alpine
 
-# FROM alpine:latest
-
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
 LABEL version="1703-03"
