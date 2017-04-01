@@ -5,7 +5,7 @@ Agent -> Cache -> Persister (https://github.com/lomik/go-carbon)
 
 # Status
 
-[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=1703-03)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
+[![Build Status](https://travis-ci.org/bodsch/docker-go-carbon.svg?branch=1703-04)](https://travis-ci.org/bodsch/docker-carbon-relay-g)
 
 
 # Build
