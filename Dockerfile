@@ -3,7 +3,7 @@ FROM bodsch/docker-golang:1.8
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1705-01"
+LABEL version="1705-03"
 
 EXPOSE 2003 2003/udp 2004 7002 7007 8080
 
@@ -11,7 +11,7 @@ ENV \
   ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
   ALPINE_VERSION="edge" \
   TERM=xterm \
-  BUILD_DATE="2017-05-01" \
+  BUILD_DATE="2017-05-13" \
   VERSION="0.9.1" \
   GOPATH=/opt/go \
   GO15VENDOREXPERIMENT=0
@@ -25,7 +25,7 @@ LABEL org.label-schema.build-date=${BUILD_DATE} \
       org.label-schema.version=${VERSION} \
       org.label-schema.schema-version="1.0" \
       com.microscaling.docker.dockerfile="/Dockerfile" \
-      com.microscaling.license="GNU General Public License v3.0"
+      com.microscaling.license="The Unlicense"
 
 # ---------------------------------------------------------------------------------------
 
