@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 
-WORK_DIR=${WORK_DIR:-/srv}
+WORK_DIR="/srv"
 
 CONFIG_FILE="/etc/carbon.conf"
 
