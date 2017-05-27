@@ -1,65 +1,82 @@
 
-CONTAINER  := go-carbon
-IMAGE_NAME := docker-go-carbon
+include env_make
 
-DATA_DIR   := /tmp/docker-data
+NS       = bodsch
+VERSION ?= latest
+
+REPO     = docker-go-carbon
+NAME     = go-carbon
+INSTANCE = default
+
+.PHONY: build push shell run start stop rm release
+
 
 build:
-	docker \
-		build \
-		--rm --tag=$(IMAGE_NAME) .
-	@echo Image tag: ${IMAGE_NAME}
+	docker build \
+		--rm \
+		--tag $(NS)/$(REPO):$(VERSION) .
 
 clean:
-	docker \
-		rmi \
-		${IMAGE_NAME}
+	docker rmi \
+		--force \
+		$(NS)/$(REPO):$(VERSION)
 
-run:
-	docker \
-		run \
-		--detach \
-		--interactive \
-		--tty \
-		--publish=2003:2003 \
-		--publish=2003:2003/udp \
-		--publish=2004:2004 \
-		--publish=7002:7002 \
-		--publish=7007:7007 \
-		--volume=${DATA_DIR}:/srv \
-		--hostname=${CONTAINER} \
-		--name=${CONTAINER} \
-		$(IMAGE_NAME)
+history:
+	docker history \
+		$(NS)/$(REPO):$(VERSION)
+
+push:
+	docker push \
+		$(NS)/$(REPO):$(VERSION)
 
 shell:
-	docker \
-		run \
+	docker run \
 		--rm \
+		--name $(NAME)-$(INSTANCE) \
 		--interactive \
 		--tty \
-		--publish=2003:2003 \
-		--publish=2003:2003/udp \
-		--publish=2004:2004 \
-		--publish=7002:7002 \
-		--publish=7007:7007 \
-		--volume=${DATA_DIR}:/srv \
-		--hostname=${CONTAINER} \
-		--name=${CONTAINER} \
-		$(IMAGE_NAME) \
+		$(PORTS) \
+		$(VOLUMES) \
+		$(ENV) \
+		$(NS)/$(REPO):$(VERSION) \
 		/bin/sh
+
+run:
+	docker run \
+		--rm \
+		--name $(NAME)-$(INSTANCE) \
+		$(PORTS) \
+		$(VOLUMES) \
+		$(ENV) \
+		$(NS)/$(REPO):$(VERSION)
 
 exec:
 	docker exec \
 		--interactive \
 		--tty \
-		${CONTAINER} \
+		$(NAME)-$(INSTANCE) \
 		/bin/sh
 
-stop:
-	docker \
-		kill ${CONTAINER}
+start:
+	docker run \
+		--detach \
+		--name $(NAME)-$(INSTANCE) \
+		$(PORTS) \
+		$(VOLUMES) \
+		$(ENV) \
+		$(NS)/$(REPO):$(VERSION)
 
-history:
-	docker \
-		history ${IMAGE_NAME}
+stop:
+	docker stop \
+		$(NAME)-$(INSTANCE)
+
+rm:
+	docker rm \
+		$(NAME)-$(INSTANCE)
+
+release: build
+	make push -e VERSION=$(VERSION)
+
+default: build
+
 
