@@ -1,6 +1,5 @@
 
 include env_make
-
 NS       = bodsch
 VERSION ?= latest
 
@@ -9,7 +8,6 @@ NAME     = go-carbon
 INSTANCE = default
 
 .PHONY: build push shell run start stop rm release
-
 
 build:
 	docker build \
@@ -78,5 +76,3 @@ release: build
 	make push -e VERSION=$(VERSION)
 
 default: build
-
-
