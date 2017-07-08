@@ -7,14 +7,15 @@ ENV \
   ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
   ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-05-27" \
-  VERSION="0.10.0-beta1" \
-  GOPATH=/opt/go
+  BUILD_DATE="2017-07-08" \
+  VERSION="0.10.1-17" \
+  GOPATH=/opt/go \
+  APK_ADD="g++ git go make musl-dev"
 
 EXPOSE 2003 2003/udp 2004 7002 7007 8080
 
 LABEL \
-  version="1705-04.1" \
+  version="1707-27.1" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="go carbon Docker Image" \
   org.label-schema.description="Inofficial go carbon Docker Image" \
@@ -28,29 +29,25 @@ LABEL \
 
 # ---------------------------------------------------------------------------------------
 
-WORKDIR ${GOPATH}
+WORKDIR /
 
 RUN \
-  apk --quiet --no-cache update && \
-  apk --quiet --no-cache upgrade && \
-  apk --quiet --no-cache add \
-    build-base \
-    go \
-    git && \
-
-  export GOMAXPROCS=4 && \
+  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/main"       > /etc/apk/repositories && \
+  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/community" >> /etc/apk/repositories && \
+  apk --no-cache update && \
+  apk --no-cache upgrade && \
+  apk --no-cache add ${APK_ADD} && \
   mkdir -p ${GOPATH} && \
   export PATH="${PATH}:${GOPATH}/bin" && \
   git clone https://github.com/lomik/go-carbon.git && \
   cd go-carbon && \
+  version=$(git describe --tags --always | sed 's/^v//') && \
+  echo "build version: ${version}" && \
   make submodules  && \
   make && \
   install -m 0755 go-carbon /usr/bin/go-carbon && \
   unset GOROOT_BOOTSTRAP && \
-  apk --quiet --purge del \
-    build-base \
-    go \
-    git && \
+  apk --purge del ${APK_ADD} && \
   rm -rf \
     ${GOPATH} \
     /usr/lib/go \
