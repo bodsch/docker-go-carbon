@@ -1,6 +1,5 @@
 
 include env_make
-
 NS       = bodsch
 VERSION ?= latest
 

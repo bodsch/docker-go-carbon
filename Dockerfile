@@ -1,53 +1,53 @@
 
-FROM bodsch/docker-golang:1.8
+FROM alpine:3.6
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
-LABEL version="1705-03"
+ENV \
+  ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
+  ALPINE_VERSION="v3.6" \
+  TERM=xterm \
+  BUILD_DATE="2017-07-08" \
+  VERSION="0.10.1-17" \
+  GOPATH=/opt/go \
+  APK_ADD="g++ git go make musl-dev"
 
 EXPOSE 2003 2003/udp 2004 7002 7007 8080
 
-ENV \
-  ALPINE_MIRROR="dl-cdn.alpinelinux.org" \
-  ALPINE_VERSION="edge" \
-  TERM=xterm \
-  BUILD_DATE="2017-05-13" \
-  VERSION="0.9.1" \
-  GOPATH=/opt/go \
-  GO15VENDOREXPERIMENT=0
-
-LABEL org.label-schema.build-date=${BUILD_DATE} \
-      org.label-schema.name="go carbon Docker Image" \
-      org.label-schema.description="Inofficial go carbon Docker Image" \
-      org.label-schema.url="https://github.com/lomik/go-carbon" \
-      org.label-schema.vcs-url="https://github.com/bodsch/docker-go-carbon" \
-      org.label-schema.vendor="Bodo Schulz" \
-      org.label-schema.version=${VERSION} \
-      org.label-schema.schema-version="1.0" \
-      com.microscaling.docker.dockerfile="/Dockerfile" \
-      com.microscaling.license="The Unlicense"
+LABEL \
+  version="1707-27.1" \
+  org.label-schema.build-date=${BUILD_DATE} \
+  org.label-schema.name="go carbon Docker Image" \
+  org.label-schema.description="Inofficial go carbon Docker Image" \
+  org.label-schema.url="https://github.com/lomik/go-carbon" \
+  org.label-schema.vcs-url="https://github.com/bodsch/docker-go-carbon" \
+  org.label-schema.vendor="Bodo Schulz" \
+  org.label-schema.version=${VERSION} \
+  org.label-schema.schema-version="1.0" \
+  com.microscaling.docker.dockerfile="/Dockerfile" \
+  com.microscaling.license="The Unlicense"
 
 # ---------------------------------------------------------------------------------------
 
-WORKDIR ${GOPATH}
+WORKDIR /
 
 RUN \
-  apk --quiet --no-cache update && \
-  apk --quiet --no-cache upgrade && \
-  apk --quiet --no-cache add \
-    build-base \
-    git && \
-
+  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/main"       > /etc/apk/repositories && \
+  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/community" >> /etc/apk/repositories && \
+  apk --no-cache update && \
+  apk --no-cache upgrade && \
+  apk --no-cache add ${APK_ADD} && \
   mkdir -p ${GOPATH} && \
   export PATH="${PATH}:${GOPATH}/bin" && \
   git clone https://github.com/lomik/go-carbon.git && \
   cd go-carbon && \
+  version=$(git describe --tags --always | sed 's/^v//') && \
+  echo "build version: ${version}" && \
   make submodules  && \
   make && \
   install -m 0755 go-carbon /usr/bin/go-carbon && \
-  apk --quiet --purge del \
-    build-base \
-    git && \
+  unset GOROOT_BOOTSTRAP && \
+  apk --purge del ${APK_ADD} && \
   rm -rf \
     ${GOPATH} \
     /usr/lib/go \
