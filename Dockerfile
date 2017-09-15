@@ -7,15 +7,15 @@ ENV \
   ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
   ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-08-29" \
-  VERSION="0.10.1-62" \
+  BUILD_DATE="2017-09-15" \
+  VERSION="0.11.0-2" \
   GOPATH=/opt/go \
   APK_ADD="g++ git go make musl-dev"
 
 EXPOSE 2003 2003/udp 2004 7002 7007 8080
 
 LABEL \
-  version="1708-35" \
+  version="1709" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="go carbon Docker Image" \
   org.label-schema.description="Inofficial go carbon Docker Image" \
@@ -46,6 +46,8 @@ RUN \
   make submodules  && \
   make && \
   install -m 0755 go-carbon /usr/bin/go-carbon && \
+  cp /go-carbon/deploy/go-carbon.conf /etc/carbon.conf-DIST && \
+  mkdir -p /var/log/carbon && \
   unset GOROOT_BOOTSTRAP && \
   apk --purge del ${APK_ADD} && \
   rm -rf \
