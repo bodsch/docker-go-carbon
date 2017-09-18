@@ -25,8 +25,8 @@ prepare() {
 #  echo "aggregation file: ${aggregation_file}"
 
   [ -d ${data_directory} ]   || mkdir -p ${data_directory}
-  [ -z ${schemas_file} ]     || mv /etc/go-carbon/go-carbon.schemas ${schemas_file}
-  [ -z ${aggregation_file} ] || mv /etc/go-carbon/go-carbon.aggregation ${aggregation_file}
+  [ -z ${schemas_file} ]     || cp /etc/go-carbon/go-carbon.schemas ${schemas_file}
+  [ -z ${aggregation_file} ] || cp /etc/go-carbon/go-carbon.aggregation ${aggregation_file}
 }
 
 
