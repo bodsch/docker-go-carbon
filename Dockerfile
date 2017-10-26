@@ -11,9 +11,9 @@ ENV \
   BUILD_TYPE="stable" \
   VERSION="0.11.0" \
   GOPATH=/opt/go \
-  APK_ADD="g++ git go make musl-dev"
+  APK_ADD="g++ git go make musl-dev shadow"
 
-EXPOSE 2003 2003/udp 2004 7002 7007 8080
+EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 LABEL \
   version="1710" \
@@ -38,7 +38,11 @@ RUN \
   apk --no-cache --quiet update && \
   apk --no-cache --quiet upgrade && \
   apk --no-cache --quiet --virtual .build-deps add ${APK_ADD} && \
-  mkdir -p ${GOPATH} && \
+  mkdir -p \
+    ${GOPATH} \
+    /var/log/go-carbon && \
+  /usr/sbin/useradd --system -U -s /bin/false -c "User for Graphite daemon" carbon && \
+  cd ${GOPATH} && \
   export PATH="${PATH}:${GOPATH}/bin" && \
   git clone https://github.com/lomik/go-carbon.git && \
   cd go-carbon && \
@@ -53,7 +57,10 @@ RUN \
   echo "build version: ${version}" && \
   make submodules  && \
   make && \
-  install -m 0755 go-carbon /usr/bin/go-carbon && \
+  install -m 0755 ${GOPATH}/go-carbon/go-carbon /usr/bin/go-carbon && \
+  mv ${GOPATH}/go-carbon/deploy/go-carbon.conf           /etc/go-carbon.conf && \
+  mv ${GOPATH}/go-carbon/deploy/storage-schemas.conf     /etc/go-carbon_storage-schemas.conf && \
+  mv ${GOPATH}/go-carbon/deploy/storage-aggregation.conf /etc/go-carbon_storage-aggregation.conf && \
   unset GOROOT_BOOTSTRAP && \
   apk --quiet --purge del .build-deps && \
   rm -rf \

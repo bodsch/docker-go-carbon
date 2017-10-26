@@ -3,6 +3,7 @@ PORTS = \
   --publish 2003:2003/udp \
   --publish 2004:2004 \
   --publish 7002:7002 \
+  --publish 7003:7003 \
   --publish 7007:7007 \
   --publish 8080:8080 \
 
@@ -10,5 +11,5 @@ VOLUMES = \
   --volume /var/log/docker:/var/log \
   --volume /tmp/docker-data:/srv
 
-#ENV = \
-#  --env VAR="value"
+ENV = \
+  --env VAR="value"

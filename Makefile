@@ -33,7 +33,6 @@ shell:
 		--name $(NAME)-$(INSTANCE) \
 		--interactive \
 		--tty \
-		$(PORTS) \
 		$(VOLUMES) \
 		$(ENV) \
 		$(NS)/$(REPO):$(VERSION) \
