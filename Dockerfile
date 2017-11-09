@@ -7,7 +7,7 @@ ENV \
   ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
   ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-10-26" \
+  BUILD_DATE="2017-11-09" \
   BUILD_TYPE="stable" \
   VERSION="0.11.0" \
   GOPATH=/opt/go \
@@ -16,7 +16,7 @@ ENV \
 EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 LABEL \
-  version="1710" \
+  version="1711" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="go carbon Docker Image" \
   org.label-schema.description="Inofficial go carbon Docker Image" \
