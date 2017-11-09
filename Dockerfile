@@ -7,15 +7,16 @@ ENV \
   ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
   ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-08-29" \
-  VERSION="0.10.1-62" \
+  BUILD_DATE="2017-11-09" \
+  BUILD_TYPE="stable" \
+  VERSION="0.11.0" \
   GOPATH=/opt/go \
-  APK_ADD="g++ git go make musl-dev"
+  APK_ADD="g++ git go make musl-dev shadow"
 
-EXPOSE 2003 2003/udp 2004 7002 7007 8080
+EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 LABEL \
-  version="1708-35" \
+  version="1711" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="go carbon Docker Image" \
   org.label-schema.description="Inofficial go carbon Docker Image" \
@@ -34,20 +35,34 @@ WORKDIR /
 RUN \
   echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/main"       > /etc/apk/repositories && \
   echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/community" >> /etc/apk/repositories && \
-  apk --no-cache update && \
-  apk --no-cache upgrade && \
-  apk --no-cache add ${APK_ADD} && \
-  mkdir -p ${GOPATH} && \
+  apk --no-cache --quiet update && \
+  apk --no-cache --quiet upgrade && \
+  apk --no-cache --quiet --virtual .build-deps add ${APK_ADD} && \
+  mkdir -p \
+    ${GOPATH} \
+    /var/log/go-carbon && \
+  /usr/sbin/useradd --system -U -s /bin/false -c "User for Graphite daemon" carbon && \
+  cd ${GOPATH} && \
   export PATH="${PATH}:${GOPATH}/bin" && \
   git clone https://github.com/lomik/go-carbon.git && \
   cd go-carbon && \
+  #
+  # build stable packages
+  if [ "${BUILD_TYPE}" == "stable" ] ; then \
+    echo "switch to stable Tag v${VERSION}" && \
+    git checkout tags/v${VERSION} 2> /dev/null ; \
+  fi && \
+  #
   version=$(git describe --tags --always | sed 's/^v//') && \
   echo "build version: ${version}" && \
   make submodules  && \
   make && \
-  install -m 0755 go-carbon /usr/bin/go-carbon && \
+  install -m 0755 ${GOPATH}/go-carbon/go-carbon /usr/bin/go-carbon && \
+  mv ${GOPATH}/go-carbon/deploy/go-carbon.conf           /etc/go-carbon.conf && \
+  mv ${GOPATH}/go-carbon/deploy/storage-schemas.conf     /etc/go-carbon_storage-schemas.conf && \
+  mv ${GOPATH}/go-carbon/deploy/storage-aggregation.conf /etc/go-carbon_storage-aggregation.conf && \
   unset GOROOT_BOOTSTRAP && \
-  apk --purge del ${APK_ADD} && \
+  apk --quiet --purge del .build-deps && \
   rm -rf \
     ${GOPATH} \
     /usr/lib/go \
