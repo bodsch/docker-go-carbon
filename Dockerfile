@@ -1,22 +1,19 @@
 
-FROM alpine:3.6
+FROM alpine:3.7
 
 MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
 
 ENV \
-  ALPINE_MIRROR="mirror1.hs-esslingen.de/pub/Mirrors" \
-  ALPINE_VERSION="v3.6" \
   TERM=xterm \
-  BUILD_DATE="2017-11-09" \
+  BUILD_DATE="2017-12-06" \
   BUILD_TYPE="stable" \
   VERSION="0.11.0" \
-  GOPATH=/opt/go \
-  APK_ADD="g++ git go make musl-dev shadow"
+  GOPATH=/opt/go
 
 EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 LABEL \
-  version="1711" \
+  version="1712" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="go carbon Docker Image" \
   org.label-schema.description="Inofficial go carbon Docker Image" \
@@ -30,14 +27,11 @@ LABEL \
 
 # ---------------------------------------------------------------------------------------
 
-WORKDIR /
-
 RUN \
-  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/main"       > /etc/apk/repositories && \
-  echo "http://${ALPINE_MIRROR}/alpine/${ALPINE_VERSION}/community" >> /etc/apk/repositories && \
-  apk --no-cache --quiet update && \
-  apk --no-cache --quiet upgrade && \
-  apk --no-cache --quiet --virtual .build-deps add ${APK_ADD} && \
+  apk update --no-cache --quiet && \
+  apk upgrade --no-cache --quiet && \
+  apk add --no-cache --quiet --virtual .build-deps \
+    g++ git go make musl-dev shadow && \
   mkdir -p \
     ${GOPATH} \
     /var/log/go-carbon && \
@@ -72,6 +66,16 @@ RUN \
     /var/cache/apk/*
 
 COPY rootfs/ /
+
+WORKDIR /
+
+VOLUME /srv
+
+HEALTHCHECK \
+  --interval=5s \
+  --timeout=2s \
+  --retries=12 \
+  CMD ps ax | grep -c go-carbon || exit 1
 
 CMD [ "/init/run.sh" ]
 
