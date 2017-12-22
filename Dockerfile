@@ -7,7 +7,7 @@ ENV \
   TERM=xterm \
   BUILD_DATE="2017-12-06" \
   BUILD_TYPE="stable" \
-  VERSION="0.11.0" \
+  VERSION="0.12.0-rc1" \
   GOPATH=/opt/go
 
 EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
@@ -40,13 +40,10 @@ RUN \
   export PATH="${PATH}:${GOPATH}/bin" && \
   git clone https://github.com/lomik/go-carbon.git && \
   cd go-carbon && \
-  #
-  # build stable packages
   if [ "${BUILD_TYPE}" == "stable" ] ; then \
     echo "switch to stable Tag v${VERSION}" && \
     git checkout tags/v${VERSION} 2> /dev/null ; \
   fi && \
-  #
   version=$(git describe --tags --always | sed 's/^v//') && \
   echo "build version: ${version}" && \
   make submodules  && \
