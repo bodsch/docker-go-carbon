@@ -3,6 +3,7 @@ FROM alpine:3.7
 
 ENV \
   TERM=xterm \
+  TZ='Europe/Berlin' \
   BUILD_DATE="2018-01-18" \
   BUILD_TYPE="stable" \
   VERSION="0.12.0-rc1"
