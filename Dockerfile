@@ -1,19 +1,17 @@
 
 FROM alpine:3.7
 
-MAINTAINER Bodo Schulz <bodo@boone-schulz.de>
-
 ENV \
   TERM=xterm \
-  BUILD_DATE="2017-12-06" \
+  BUILD_DATE="2018-01-18" \
   BUILD_TYPE="stable" \
-  VERSION="0.12.0-rc1" \
-  GOPATH=/opt/go
+  VERSION="0.12.0-rc1"
 
 EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 LABEL \
-  version="1712" \
+  version="1801" \
+  maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="go carbon Docker Image" \
   org.label-schema.description="Inofficial go carbon Docker Image" \
@@ -31,7 +29,10 @@ RUN \
   apk update --no-cache --quiet && \
   apk upgrade --no-cache --quiet && \
   apk add --no-cache --quiet --virtual .build-deps \
-    g++ git go make musl-dev shadow && \
+    g++ git go make musl-dev shadow tzdata && \
+  cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
+  echo ${TZ} > /etc/timezone && \
+  export GOPATH=/opt/go && \
   mkdir -p \
     ${GOPATH} \
     /var/log/go-carbon && \
