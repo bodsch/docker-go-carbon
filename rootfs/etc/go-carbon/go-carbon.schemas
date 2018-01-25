@@ -4,7 +4,7 @@ retentions = 60:90d
 
 [default]
 pattern = .*
-retentions = 30s:6h,1m:30d,10m:360d,30m:720d,1d:1825d
+retentions = 30s:6h,5m:30d,10m:360d
 
 #[default_1min_for_1day]
 #pattern = .*
