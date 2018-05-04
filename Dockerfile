@@ -4,7 +4,7 @@ FROM golang:1.10-alpine as builder
 ENV \
   TERM=xterm \
   TZ='Europe/Berlin' \
-  BUILD_DATE="2018-03-20" \
+  BUILD_DATE="2018-05-04" \
   BUILD_TYPE="stable" \
   VERSION="0.12.0"
 
@@ -61,7 +61,7 @@ ENV \
 EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 LABEL \
-  version="1803" \
+  version="1805" \
   maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
   org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.name="go carbon Docker Image" \
