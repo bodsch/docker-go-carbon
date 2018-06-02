@@ -1,31 +1,48 @@
 
 include env_make
 NS       = bodsch
-VERSION ?= latest
 
 REPO     = docker-go-carbon
 NAME     = go-carbon
 INSTANCE = default
 
+BUILD_DATE       := $(shell date +%Y-%m-%d)
+BUILD_VERSION    := $(shell date +%y%m)
+BUILD_TYPE       ?= stable
+GOCARBON_VERSION ?= 0.12.0
+
 .PHONY: build push shell run start stop rm release
 
-build:
+default: build
+
+params:
+	@echo ""
+	@echo " GOCARBON_VERSION : ${GOCARBON_VERSION}"
+	@echo " BUILD_DATE       : $(BUILD_DATE)"
+	@echo ""
+
+build:	params
 	docker build \
-		--rm \
-		--tag $(NS)/$(REPO):$(VERSION) .
+		--force-rm \
+		--compress \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg BUILD_VERSION=$(BUILD_VERSION) \
+		--build-arg BUILD_TYPE=$(BUILD_TYPE) \
+		--build-arg GOCARBON_VERSION=${GOCARBON_VERSION} \
+		--tag $(NS)/$(REPO):${GOCARBON_VERSION} .
 
 clean:
 	docker rmi \
 		--force \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${GOCARBON_VERSION}
 
 history:
 	docker history \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${GOCARBON_VERSION}
 
 push:
 	docker push \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${GOCARBON_VERSION}
 
 shell:
 	docker run \
@@ -35,7 +52,7 @@ shell:
 		--tty \
 		$(VOLUMES) \
 		$(ENV) \
-		$(NS)/$(REPO):$(VERSION) \
+		$(NS)/$(REPO):${GOCARBON_VERSION} \
 		/bin/sh
 
 run:
@@ -45,7 +62,7 @@ run:
 		$(PORTS) \
 		$(VOLUMES) \
 		$(ENV) \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${GOCARBON_VERSION}
 
 exec:
 	docker exec \
@@ -61,7 +78,7 @@ start:
 		$(PORTS) \
 		$(VOLUMES) \
 		$(ENV) \
-		$(NS)/$(REPO):$(VERSION)
+		$(NS)/$(REPO):${GOCARBON_VERSION}
 
 stop:
 	docker stop \
@@ -72,6 +89,6 @@ rm:
 		$(NAME)-$(INSTANCE)
 
 release: build
-	make push -e VERSION=$(VERSION)
+	make push -e VERSION=${GOCARBON_VERSION}
 
 default: build

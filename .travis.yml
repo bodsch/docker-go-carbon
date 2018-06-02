@@ -3,17 +3,18 @@ sudo: required
 services:
   - docker
 
-install:
-  - docker build --tag bodsch/docker-go-carbon .
-  - docker run --detach --name go-carbon bodsch/docker-go-carbon
+env:
+  global:
+    - BUILD_TYPE=${BUILD_TYPE:-stable}
+    - GOCARBON_VERSION=${GOCARBON_VERSION:-0.12.0}
 
-script:
-  - docker ps | grep -q go-carbon
-
-after_success:
-  - |
-    [ "${TRAVIS_BRANCH}" == "master" ] && curl \
-      --request POST \
-      --header "Content-Type: application/json"  \
-      --data '{"source_type":"Branch","source_name":"master"}' \
-      https://registry.hub.docker.com/u/bodsch/docker-go-carbon/trigger/${DOCKER_HUB_TOKEN}/
+jobs:
+  include:
+    - stage: build, test and push docker image
+      script:
+        - make build
+        - make start
+        - docker ps | grep -q go-carbon
+        - make stop
+        - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+        - docker push ${DOCKER_USERNAME}/docker-go-carbon:${ICINGAWEB_VERSION}
