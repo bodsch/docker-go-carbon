@@ -51,7 +51,7 @@ CMD [ "/bin/bash" ]
 
 # ---------------------------------------------------------------------------------------
 
-FROM alpine:latest
+FROM alpine:3.7
 
 ENV \
   TZ='Europe/Berlin'
