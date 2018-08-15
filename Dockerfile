@@ -51,26 +51,12 @@ CMD [ "/bin/bash" ]
 
 # ---------------------------------------------------------------------------------------
 
-FROM alpine:latest
+FROM alpine:3.8
 
 ENV \
   TZ='Europe/Berlin'
 
 EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
-
-LABEL \
-  version="${BUILD_TYPE}" \
-  maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
-  org.label-schema.build-date=${BUILD_DATE} \
-  org.label-schema.name="go carbon Docker Image" \
-  org.label-schema.description="Inofficial go carbon Docker Image" \
-  org.label-schema.url="https://github.com/lomik/go-carbon" \
-  org.label-schema.vcs-url="https://github.com/bodsch/docker-go-carbon" \
-  org.label-schema.vendor="Bodo Schulz" \
-  org.label-schema.version=${GOCARBON_VERSION} \
-  org.label-schema.schema-version="1.0" \
-  com.microscaling.docker.dockerfile="/Dockerfile" \
-  com.microscaling.license="The Unlicense"
 
 # ---------------------------------------------------------------------------------------
 
@@ -105,5 +91,21 @@ HEALTHCHECK \
   CMD ps ax | grep -v grep | grep -c go-carbon || exit 1
 
 CMD [ "/init/run.sh" ]
+
+# ---------------------------------------------------------------------------------------
+
+LABEL \
+  version="${BUILD_TYPE}" \
+  maintainer="Bodo Schulz <bodo@boone-schulz.de>" \
+  org.label-schema.build-date=${BUILD_DATE} \
+  org.label-schema.name="go carbon Docker Image" \
+  org.label-schema.description="Inofficial go carbon Docker Image" \
+  org.label-schema.url="https://github.com/lomik/go-carbon" \
+  org.label-schema.vcs-url="https://github.com/bodsch/docker-go-carbon" \
+  org.label-schema.vendor="Bodo Schulz" \
+  org.label-schema.version=${GOCARBON_VERSION} \
+  org.label-schema.schema-version="1.0" \
+  com.microscaling.docker.dockerfile="/Dockerfile" \
+  com.microscaling.license="The Unlicense"
 
 # ---------------------------------------------------------------------------------------

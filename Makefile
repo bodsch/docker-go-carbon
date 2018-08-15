@@ -9,7 +9,7 @@ INSTANCE = default
 BUILD_DATE       := $(shell date +%Y-%m-%d)
 BUILD_VERSION    := $(shell date +%y%m)
 BUILD_TYPE       ?= stable
-GOCARBON_VERSION ?= 0.12.0
+GOCARBON_VERSION ?= 0.13.0
 
 .PHONY: build push shell run start stop rm release
 
