@@ -13,9 +13,9 @@ RUN \
   apk upgrade --no-cache && \
   apk add \
     g++ git make musl-dev && \
-  echo "export BUILD_DATE=${BUILD_DATE}"     > /etc/enviroment && \
-  echo "export BUILD_TYPE=${BUILD_TYPE}"    >> /etc/enviroment && \
-  echo "export VERSION=${GOCARBON_VERSION}" >> /etc/enviroment
+  echo "export BUILD_DATE=${BUILD_DATE}"     > /etc/environment && \
+  echo "export BUILD_TYPE=${BUILD_TYPE}"    >> /etc/environment && \
+  echo "export VERSION=${GOCARBON_VERSION}" >> /etc/environment
 
 RUN \
   export GOPATH=/opt/go && \
@@ -62,7 +62,7 @@ EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 RUN \
   apk update --no-cache --quiet && \
-  if [ -f /etc/enviroment ] ; then . /etc/enviroment; fi && \
+  if [ -f /etc/environment ] ; then . /etc/environment; fi && \
   apk add --no-cache --quiet --virtual .build-deps \
     shadow tzdata && \
   cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
@@ -74,7 +74,7 @@ RUN \
     /tmp/* \
     /var/cache/apk/*
 
-COPY --from=builder /etc/enviroment /etc/enviroment
+COPY --from=builder /etc/environment /etc/environment
 COPY --from=builder /go-carbon/etc  /etc/go-carbon/
 COPY --from=builder /go-carbon/go-carbon /usr/bin/go-carbon
 
