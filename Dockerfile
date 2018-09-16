@@ -6,19 +6,21 @@ ARG BUILD_VERSION
 ARG BUILD_TYPE
 ARG GOCARBON_VERSION
 
+ENV \
+  GOPATH=/opt/go
+
 # ---------------------------------------------------------------------------------------
 
 RUN \
-  apk update --no-cache && \
-  apk upgrade --no-cache && \
-  apk add \
+  apk update  --quiet --no-cache && \
+  apk upgrade --quiet --no-cache && \
+  apk add     --quiet \
     g++ git make musl-dev && \
-  echo "export BUILD_DATE=${BUILD_DATE}"     > /etc/environment && \
-  echo "export BUILD_TYPE=${BUILD_TYPE}"    >> /etc/environment && \
-  echo "export VERSION=${GOCARBON_VERSION}" >> /etc/environment
+  echo "export BUILD_DATE=${BUILD_DATE}"  > /etc/profile.d/go-carbon.sh && \
+  echo "export BUILD_TYPE=${BUILD_TYPE}" >> /etc/profile.d/go-carbon.sh && \
+  echo "export VERSION=${VERSION}"       >> /etc/profile.d/go-carbon.sh
 
 RUN \
-  export GOPATH=/opt/go && \
   mkdir -p \
     ${GOPATH} \
     /var/log/go-carbon && \
@@ -27,7 +29,6 @@ RUN \
   git clone https://github.com/lomik/go-carbon.git
 
 RUN \
-  export GOPATH=/opt/go && \
   cd ${GOPATH} && \
   export PATH="${PATH}:${GOPATH}/bin" && \
   cd go-carbon && \
@@ -40,7 +41,6 @@ RUN \
   make
 
 RUN \
-  export GOPATH=/opt/go && \
   mkdir -p /go-carbon/etc && \
   mv ${GOPATH}/go-carbon/go-carbon                       /go-carbon/go-carbon && \
   mv ${GOPATH}/go-carbon/deploy/go-carbon.conf           /go-carbon/etc/go-carbon.conf && \
@@ -61,9 +61,8 @@ EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 # ---------------------------------------------------------------------------------------
 
 RUN \
-  apk update --no-cache --quiet && \
-  if [ -f /etc/environment ] ; then . /etc/environment; fi && \
-  apk add --no-cache --quiet --virtual .build-deps \
+  apk update --quiet --no-cache && \
+  apk add    --quiet --no-cache --virtual .build-deps \
     shadow tzdata && \
   cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
   echo ${TZ} > /etc/timezone && \
@@ -74,7 +73,7 @@ RUN \
     /tmp/* \
     /var/cache/apk/*
 
-COPY --from=builder /etc/environment /etc/environment
+COPY --from=builder /etc/profile.d/go-carbon.sh  /etc/profile.d/go-carbon.sh
 COPY --from=builder /go-carbon/etc  /etc/go-carbon/
 COPY --from=builder /go-carbon/go-carbon /usr/bin/go-carbon
 
