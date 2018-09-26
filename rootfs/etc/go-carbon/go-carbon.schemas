@@ -1,12 +1,33 @@
+#
+# http://m30m.github.io/whisper-calculator/
+#
+
 [carbon]
+# 1 Host and 1 Metric produce: 928.19 Kilobytes
+#
 pattern = ^carbon\.
-retentions = 60:90d
+retentions = 1m:31d,5m:60d,15m:120d,1h:240d
+
+[grafana]
+# 1 Host and 1 Metric produce: 556.94 Kilobytes
+#
+pattern = ^grafana\.
+retentions = 1m:15d,5m:30d,15m:120d,1h:240d
+
+[icinga2]
+# 1 Host and 1 Metric produce: 556.94 Kilobytes
+#
+pattern = ^icinga2\.
+retentions = 1m:15d,5m:30d,15m:120d,1h:240d
+
+[telegraf]
+# 1 Host and 1 Metric produce: 105.51 Kilobytes
+#
+pattern = ^telegraf\.
+retentions = 1m:6h,5m:30d
 
 [default]
+# 1 Host and 1 Metric produce: 767.88 Kilobytes
+#
 pattern = .*
-retentions = 30s:6h,5m:30d,10m:360d
-
-#[default_1min_for_1day]
-#pattern = .*
-#retentions = 60s:1d
-
+retentions = 30s:6h,1m:15d,5m:30d,10m:240d
