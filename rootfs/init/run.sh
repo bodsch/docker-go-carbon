@@ -24,21 +24,21 @@ prepare() {
 #  echo "schemas file: ${schemas_file}"
 #  echo "aggregation file: ${aggregation_file}"
 
-  [ -d ${data_directory} ]   || mkdir -p ${data_directory}
-  [ -z ${schemas_file} ]     || cp /etc/go-carbon/go-carbon.schemas ${schemas_file}
-  [ -z ${aggregation_file} ] || cp /etc/go-carbon/go-carbon.aggregation ${aggregation_file}
+  [ -d "${data_directory}" ]   || mkdir -p "${data_directory}"
+  [ -z "${schemas_file}" ]     || cp /etc/go-carbon/go-carbon.schemas "${schemas_file}"
+  [ -z "${aggregation_file}" ] || cp /etc/go-carbon/go-carbon.aggregation "${aggregation_file}"
 }
 
 
 run() {
 
-  go-carbon -config-print-default > ${DEFAULT_CONFIG}
+  go-carbon -config-print-default > "${DEFAULT_CONFIG}"
 
   prepare
 
-  go-carbon -check-config -config ${CONFIG_FILE}
+  go-carbon -check-config -config "${CONFIG_FILE}"
 
-  go-carbon -config ${CONFIG_FILE}
+  go-carbon -config "${CONFIG_FILE}"
 }
 
 run

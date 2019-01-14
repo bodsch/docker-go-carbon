@@ -1,6 +1,7 @@
 
 FROM golang:1-alpine as builder
 
+ARG VCS_REF
 ARG BUILD_DATE
 ARG BUILD_VERSION
 ARG BUILD_TYPE
@@ -10,31 +11,34 @@ ENV \
   GOPATH=/opt/go
 
 # ---------------------------------------------------------------------------------------
-
+# hadolint ignore=DL3003,DL3013,DL3017,DL3018,DL3019
 RUN \
   apk update  --quiet --no-cache && \
   apk upgrade --quiet --no-cache && \
   apk add     --quiet \
-    g++ git make musl-dev && \
+    g++ \
+    git \
+    make \
+    musl-dev && \
   echo "export BUILD_DATE=${BUILD_DATE}"  > /etc/profile.d/go-carbon.sh && \
   echo "export BUILD_TYPE=${BUILD_TYPE}" >> /etc/profile.d/go-carbon.sh && \
   echo "export VERSION=${VERSION}"       >> /etc/profile.d/go-carbon.sh
 
-RUN \
-  mkdir -p \
-    ${GOPATH} \
-    /var/log/go-carbon && \
-  cd ${GOPATH} && \
-  export PATH="${PATH}:${GOPATH}/bin" && \
-  git clone https://github.com/lomik/go-carbon.git
+WORKDIR ${GOPATH}
 
 RUN \
-  cd ${GOPATH} && \
   export PATH="${PATH}:${GOPATH}/bin" && \
-  cd go-carbon && \
+  mkdir -p \
+    /var/log/go-carbon && \
+  git clone https://github.com/lomik/go-carbon.git
+
+WORKDIR ${GOPATH}/go-carbon
+# hadolint ignore=DL4006
+RUN \
+  export PATH="${PATH}:${GOPATH}/bin" && \
   if [ "${BUILD_TYPE}" == "stable" ] ; then \
     echo "switch to stable Tag v${GOCARBON_VERSION}" && \
-    git checkout tags/v${GOCARBON_VERSION} 2> /dev/null ; \
+    git checkout "tags/v${GOCARBON_VERSION}" 2> /dev/null ; \
   fi && \
   version=$(git describe --tags --always | sed 's/^v//') && \
   echo "build version: ${version}" && \
@@ -42,12 +46,10 @@ RUN \
 
 RUN \
   mkdir -p /go-carbon/etc && \
-  mv ${GOPATH}/go-carbon/go-carbon                       /go-carbon/go-carbon && \
-  mv ${GOPATH}/go-carbon/deploy/go-carbon.conf           /go-carbon/etc/go-carbon.conf && \
-  mv ${GOPATH}/go-carbon/deploy/storage-schemas.conf     /go-carbon/etc/go-carbon_storage-schemas.conf && \
-  mv ${GOPATH}/go-carbon/deploy/storage-aggregation.conf /go-carbon/etc/go-carbon_storage-aggregation.conf
-
-CMD [ "/bin/bash" ]
+  mv -v go-carbon                       /go-carbon/go-carbon && \
+  mv -v deploy/go-carbon.conf           /go-carbon/etc/go-carbon.conf && \
+  mv -v deploy/storage-schemas.conf     /go-carbon/etc/go-carbon_storage-schemas.conf && \
+  mv -v deploy/storage-aggregation.conf /go-carbon/etc/go-carbon_storage-aggregation.conf
 
 # ---------------------------------------------------------------------------------------
 
@@ -60,13 +62,20 @@ EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 # ---------------------------------------------------------------------------------------
 
+# hadolint ignore=DL3018
 RUN \
   apk update --quiet --no-cache && \
   apk add    --quiet --no-cache --virtual .build-deps \
-    shadow tzdata && \
-  cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
-  echo ${TZ} > /etc/timezone && \
-  /usr/sbin/useradd --system -U -s /bin/false -c "User for Graphite daemon" carbon && \
+    shadow \
+    tzdata && \
+  cp "/usr/share/zoneinfo/${TZ}" /etc/localtime && \
+  echo "${TZ}" > /etc/timezone && \
+  /usr/sbin/useradd \
+    --system \
+    -U \
+    -s /bin/false \
+    -c "User for Graphite daemon" \
+    carbon && \
   mkdir /var/log/go-carbon && \
   apk del --quiet --purge .build-deps && \
   rm -rf \
@@ -74,8 +83,8 @@ RUN \
     /var/cache/apk/*
 
 COPY --from=builder /etc/profile.d/go-carbon.sh  /etc/profile.d/go-carbon.sh
-COPY --from=builder /go-carbon/etc  /etc/go-carbon/
-COPY --from=builder /go-carbon/go-carbon /usr/bin/go-carbon
+COPY --from=builder /go-carbon/etc               /etc/go-carbon/
+COPY --from=builder /go-carbon/go-carbon         /usr/bin/go-carbon
 
 COPY rootfs/ /
 
@@ -83,13 +92,13 @@ WORKDIR /
 
 VOLUME /srv
 
+CMD ["/init/run.sh"]
+
 HEALTHCHECK \
   --interval=5s \
   --timeout=2s \
   --retries=12 \
   CMD ps ax | grep -v grep | grep -c go-carbon || exit 1
-
-CMD [ "/init/run.sh" ]
 
 # ---------------------------------------------------------------------------------------
 
@@ -101,6 +110,7 @@ LABEL \
   org.label-schema.description="Inofficial go carbon Docker Image" \
   org.label-schema.url="https://github.com/lomik/go-carbon" \
   org.label-schema.vcs-url="https://github.com/bodsch/docker-go-carbon" \
+  org.label-schema.vcs-ref=${VCS_REF} \
   org.label-schema.vendor="Bodo Schulz" \
   org.label-schema.version=${GOCARBON_VERSION} \
   org.label-schema.schema-version="1.0" \
