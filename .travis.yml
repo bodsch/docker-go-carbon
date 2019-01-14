@@ -9,12 +9,23 @@ env:
   - secure: mv1V1R/7V0FjnI2vToueEXXnYiI9Pd/bdr36VxM1d3/Uxdjcs55NPPGvJYLr7SuetQ9CPAm2dxMkpjso5PbZd5Zf00oyORw49aEkjUrUDt1HSqVj9iqLakrc+nZIaPPuv9KI2P34iw8UWOLtCwLEvJN1P43zVY21Q4YjSSutXhx3Fu8ldzySphlqcmUm43zHY70JNR790tWc+kKHVKOqw6KzKN4r0oL7FCA0nyUD2c79E0NFjiB+zHoCDeqVnbT9UT+rHSqr40mnN2bB2WbfWNY29gNW6naST+yE+iBJX9Pa21T/Sl8HAHjOsqbAXT1aoPYBlQlDgSOrgC46s0jI3a9ZrGxsZDARtQ/4/B1JXmvVgRRrT3VHXVO2zjc2O6FJVYMJwChpHa3LNTfjgZ5Q9VyJBEyfAKAi2QJId2Rwa9EszqsCVNTEhlvzb2O5S5YxZofP1hBRiPwxojr9N9E4bjwEwagEDzlMdek8Cj3zkQUtKk0pxeVCIu+3CxzTDK2jQrS2xU8Hf6IDsTduPMR9kNXADKSdwUVlh+2+lgY6M1aBhaRTbqpHJJ3LjHpWK3tfh30j+YwXWgsrvgutnZajVcufBA4eP+kw2adH4OP4r9GCDQsdfiaBsmN6yK+5tV4jCTOPm4Qpv6bixW01c/8Y2yIWEUz57Ui6WhojWZNz6ok=
 jobs:
   include:
-  - stage: build, test and push docker image
+  - stage: build
+
+
+  - stage: build and test
     script:
-    - make build
+    - make
     - make start
-    - docker ps | grep -q go-carbon
+    - make test
     - make stop
+
+  - stage: build and push docker image
+    - make
     - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+    #
+    - docker tag  ${USER}/go-carbon:latest ${DOCKER_USERNAME}/docker-go-carbon:latest
+    - docker push ${DOCKER_USERNAME}/docker-go-carbon:latest
+    #
+    - docker tag  ${DOCKER_USERNAME}/docker-go-carbon:latest ${DOCKER_USERNAME}/docker-go-carbon:${GOCARBON_VERSION}
     - docker push ${DOCKER_USERNAME}/docker-go-carbon:${GOCARBON_VERSION}
     - docker logout
