@@ -1,4 +1,3 @@
-
 FROM golang:1-alpine as builder
 
 ARG VCS_REF
@@ -46,14 +45,14 @@ RUN \
 
 RUN \
   mkdir -p /go-carbon/etc && \
-  mv -v go-carbon                       /go-carbon/go-carbon && \
-  mv -v deploy/go-carbon.conf           /go-carbon/etc/go-carbon.conf && \
-  mv -v deploy/storage-schemas.conf     /go-carbon/etc/go-carbon_storage-schemas.conf && \
-  mv -v deploy/storage-aggregation.conf /go-carbon/etc/go-carbon_storage-aggregation.conf
+  mv  go-carbon                       /go-carbon/go-carbon && \
+  mv  deploy/go-carbon.conf           /go-carbon/etc/go-carbon.conf && \
+  mv  deploy/storage-schemas.conf     /go-carbon/etc/go-carbon_storage-schemas.conf && \
+  mv  deploy/storage-aggregation.conf /go-carbon/etc/go-carbon_storage-aggregation.conf
 
 # ---------------------------------------------------------------------------------------
 
-FROM alpine:3.8
+FROM alpine:3.9
 
 ENV \
   TZ='Europe/Berlin'
@@ -61,6 +60,12 @@ ENV \
 EXPOSE 2003 2003/udp 2004 7002 7003 7007 8080
 
 # ---------------------------------------------------------------------------------------
+
+COPY --from=builder /etc/profile.d/go-carbon.sh  /etc/profile.d/go-carbon.sh
+COPY --from=builder /go-carbon/etc               /etc/go-carbon/
+COPY --from=builder /go-carbon/go-carbon         /usr/bin/go-carbon
+
+COPY rootfs/ /
 
 # hadolint ignore=DL3018
 RUN \
@@ -76,22 +81,22 @@ RUN \
     -s /bin/false \
     -c "User for Graphite daemon" \
     carbon && \
-  mkdir /var/log/go-carbon && \
+  mkdir \
+    /var/log/go-carbon && \
+  chown -R carbon:carbon \
+    /srv \
+    /var/log/go-carbon \
+    /etc/go-carbon && \
   apk del --quiet --purge .build-deps && \
   rm -rf \
     /tmp/* \
     /var/cache/apk/*
 
-COPY --from=builder /etc/profile.d/go-carbon.sh  /etc/profile.d/go-carbon.sh
-COPY --from=builder /go-carbon/etc               /etc/go-carbon/
-COPY --from=builder /go-carbon/go-carbon         /usr/bin/go-carbon
-
-COPY rootfs/ /
-
 WORKDIR /
 
 VOLUME /srv
 
+USER carbon
 CMD ["/init/run.sh"]
 
 HEALTHCHECK \
