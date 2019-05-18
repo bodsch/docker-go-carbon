@@ -5,7 +5,7 @@ export DOCKER_VERSION    ?= latest
 export BUILD_DATE        := $(shell date +%Y-%m-%d)
 export BUILD_VERSION     := $(shell date +%y%m)
 export BUILD_TYPE        ?= stable
-export GOCARBON_VERSION  ?= 0.13.0
+export GOCARBON_VERSION  ?= 0.14.0
 
 
 .PHONY: build shell run exec start stop clean compose-file
