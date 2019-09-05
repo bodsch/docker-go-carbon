@@ -96,7 +96,7 @@ WORKDIR /
 
 VOLUME /srv
 
-USER carbon
+# USER carbon
 CMD ["/init/run.sh"]
 
 HEALTHCHECK \
